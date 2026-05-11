@@ -2,6 +2,7 @@ import express from 'express';
 import cors    from 'cors';
 import dotenv  from 'dotenv';
 import { pool } from "./db/pool";
+import fishRoutes from "./routes/fishRoutes";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.get('/db-test', async (req, res) => {
     }
 });
 
+app.use('/api/fish', fishRoutes);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
