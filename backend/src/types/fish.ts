@@ -15,3 +15,10 @@ export interface CreateFishInput {
     scientific_name?: string;
     category?: 'freshwater' | 'saltwater' | 'both' | 'other';
 }
+
+export interface UpdateFishInput {
+    common_name?: string;
+    scientific_name?: string | null;
+    category?: FishCategory;
+    is_active?: boolean;
+}
