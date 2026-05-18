@@ -40,3 +40,23 @@ export async function createFish(input: CreateFishInput): Promise<Fish> {
 
     return result.rows[0];
 }
+
+export async function findFishById(fishId: number): Promise<Fish | null> {
+    const result = await pool.query<Fish>(
+        `
+            SELECT id,
+                   common_name,
+                   scientific_name,
+                   category,
+                   is_active,
+                   created_at,
+                   updated_at
+            FROM fish
+            WHERE id = $1
+              AND is_active = true LIMIT 1
+        `,
+        [fishId]
+    );
+
+    return result.rows[0] ?? null;
+}
