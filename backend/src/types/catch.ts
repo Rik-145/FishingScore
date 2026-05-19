@@ -18,3 +18,12 @@ export interface CreateCatchInput {
     caught_at?: string;
     notes?: string | null;
 }
+
+export interface UpdateCatchInput {
+    fish_id?: number;
+    session_id?: number;
+    weight_grams?: number | null;
+    length_cm?: number | null;
+    caught_at?: string;
+    notes?: string | null;
+}

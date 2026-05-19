@@ -1,7 +1,7 @@
-import { Catch, CreateCatchInput } from "../types/catch";
-import * as catchRepository        from '../repositories/catchRepository';
-import * as fishRepository         from '../repositories/fishRepository';
-import * as sessionRepository      from '../repositories/sessionRepository';
+import { Catch, CreateCatchInput, UpdateCatchInput } from "../types/catch";
+import * as catchRepository                          from '../repositories/catchRepository';
+import * as fishRepository                           from '../repositories/fishRepository';
+import * as sessionRepository                        from '../repositories/sessionRepository';
 
 function isValidDate(value: string): boolean {
     const date = new Date(value);
@@ -73,4 +73,60 @@ export async function createCatch(userId: number, input: CreateCatchInput): Prom
         caught_at: input.caught_at,
         notes: notes ?? undefined
     });
+}
+
+export async function updateUserCatch(catchId: number, userId: number, input: UpdateCatchInput): Promise<Catch> {
+    validatePositiveInteger(catchId, 'Catch id');
+
+    if (input.fish_id !== undefined) {
+        validatePositiveInteger(input.fish_id, 'Fish id');
+
+        const fish = await fishRepository.findFishById(input.fish_id);
+
+        if (!fish) {
+            throw new Error('Fish not found');
+        }
+    }
+
+    if (input.session_id !== undefined) {
+        validatePositiveInteger(input.session_id, 'Session id');
+
+        const session = await sessionRepository.findSessionByIdAndUserId(input.session_id, userId);
+
+        if (!session) {
+            throw new Error('Session not found');
+        }
+    }
+
+    validateOptionalPositiveNumber(input.weight_grams, 'Weight');
+    validateOptionalPositiveNumber(input.length_cm, 'Length');
+
+    if (input.caught_at && !isValidDate(input.caught_at)) {
+        throw new Error('Invalid caught date');
+    }
+
+    const notes = input.notes?.trim() || undefined;
+
+    const catchItem = await catchRepository.updateCatchByIdAndUserId(catchId, userId,
+        {
+            ...input,
+            notes
+        }
+    );
+
+    if (!catchItem) {
+        throw new Error('Catch not found');
+    }
+
+    return catchItem;
+}
+
+export async function deleteUserCatch(catchId: number, userId: number): Promise<void> {
+    validatePositiveInteger(catchId, 'Catch id');
+
+    const deleted = await catchRepository.deleteCatchByIdAndUserId(catchId, userId);
+
+    if (!deleted) {
+        throw new Error('Catch not found');
+    }
 }
