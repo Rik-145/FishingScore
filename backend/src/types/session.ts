@@ -17,3 +17,11 @@ export interface CreateSessionInput {
     ended_at?: string | null;
     notes?: string;
 }
+
+export interface UpdateSessionInput {
+    title?: string;
+    location?: string;
+    started_at?: string;
+    ended_at?: string;
+    notes?: string;
+}
