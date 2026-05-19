@@ -38,7 +38,7 @@ export async function getMyCatchById(req: AuthenticatedRequest, res: Response): 
             });
             return;
         }
-        
+
         const catchItem = await catchService.getUserCatchById(catchId, req.user.userId);
 
         res.json(catchItem);
@@ -64,6 +64,62 @@ export async function createCatch(req: AuthenticatedRequest, res: Response): Pro
     } catch (error) {
         res.status(400).json({
             message: error instanceof Error ? error.message : 'Failed to create catch'
+        });
+    }
+}
+
+export async function updateMyCatch(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+        if (!req.user) {
+            res.status(401).json({
+                message: 'Unauthenticated'
+            });
+            return;
+        }
+
+        const catchId = Number(req.params.id);
+
+        if (Number.isNaN(catchId)) {
+            res.status(400).json({
+                message: 'Invalid Catch ID'
+            });
+            return;
+        }
+
+        const catchItem = await catchService.updateUserCatch(catchId, req.user.userId, req.body);
+
+        res.json(catchItem);
+    } catch (error) {
+        res.status(400).json({
+            message: error instanceof Error ? error.message : 'Failed to update catch'
+        });
+    }
+}
+
+export async function deleteMyCatch(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+        if (!req.user) {
+            res.status(401).json({
+                message: 'Unauthenticated'
+            });
+            return;
+        }
+
+        const catchId = Number(req.params.id);
+
+        if (Number.isNaN(catchId)) {
+            res.status(400).json({
+                message: 'Invalid Catch ID'
+            });
+            return;
+        }
+
+        await catchService.deleteUserCatch(catchId, req.user.userId);
+
+        res.status(204).send();
+    } catch (error) {
+        res.status(404).json({
+            message: error instanceof Error ? error.message : 'Failed to delete catch'
         });
     }
 }
