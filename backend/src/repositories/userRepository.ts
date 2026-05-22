@@ -1,5 +1,5 @@
 import { pool }                             from '../db/pool';
-import { CreateUserData, PublicUser, User } from '../types/user';
+import { CreateUserData, PublicUser, UpdateProfileInput, User } from '../types/user';
 
 export async function findUserByEmail(email: string): Promise<User | null> {
     const result = await pool.query<User>(
@@ -75,4 +75,69 @@ export async function updateLastLogin(userId: number): Promise<void> {
             WHERE id = $1
         `, [userId]
     );
+}
+
+export async function updateUserProfile(userId: number, input: UpdateProfileInput): Promise<PublicUser | null> {
+    const result = await pool.query<PublicUser>(
+        `
+        UPDATE users
+        SET
+            username = COALESCE($2, username),
+            email = COALESCE($3, email),
+            updated_at = NOW()
+        WHERE id = $1
+            AND is_active = true
+        RETURNING
+            id,
+            username,
+            email,
+            role,
+            is_active,
+            created_at,
+            updated_at,
+            last_login_at
+            `,
+        [
+            userId,
+            input.username,
+            input.email
+        ]
+    );
+
+    return result.rows[0] ?? null;
+}
+
+export async function updateUserPassword(userId: number, passwordHash: string): Promise<void> {
+    await pool.query(
+        `
+        UPDATE users
+        SET
+            password_hash = $2,
+            updated_at = NOW()
+        WHERE id = $1
+            AND is_active = true
+        `,
+        [
+            userId,
+            passwordHash
+        ]
+    );
+}
+
+export async function deactivateUser(userId: number): Promise<boolean> {
+    const result = await pool.query(
+        `
+        UPDATE users
+        SET
+            is_active = false,
+            updated_at = NOW()
+        WHERE id = $1
+            AND is_active = true
+        `,
+        [
+            userId
+        ]
+    );
+
+    return (result.rowCount ?? 0) > 0;
 }
