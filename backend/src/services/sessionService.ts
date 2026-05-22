@@ -1,5 +1,6 @@
 import { CreateSessionInput, Session, UpdateSessionInput } from '../types/session';
 import * as sessionRepository                              from '../repositories/sessionRepository';
+import { AppError }                                        from '../utils/AppError';
 
 function isValidDate(value: string): boolean {
     const date = new Date(value);
@@ -15,7 +16,7 @@ export async function getUserSessionById(sessionId: number, userId: number): Pro
     const session = await sessionRepository.findSessionByIdAndUserId(sessionId, userId);
 
     if (!session) {
-        throw new Error('Session not found');
+        throw new AppError('Session not found', 404);
     }
 
     return session;
@@ -27,15 +28,15 @@ export async function createSession(userId: number, input: CreateSessionInput): 
     const notes = input.notes?.trim() || null;
 
     if (title && title.length < 2) {
-        throw new Error('Session title must be at least 2 characters');
+        throw new AppError('Session title must be at least 2 characters', 400);
     }
 
     if (input.started_at && !isValidDate(input.started_at)) {
-        throw new Error('Invalid start date');
+        throw new AppError('Invalid start date', 400);
     }
 
     if (input.ended_at && !isValidDate(input.ended_at)) {
-        throw new Error('Invalid end date');
+        throw new AppError('Invalid end date', 400);
     }
 
     if (input.started_at && input.ended_at) {
@@ -43,7 +44,7 @@ export async function createSession(userId: number, input: CreateSessionInput): 
         const endedAt = new Date(input.ended_at);
 
         if (endedAt < startedAt) {
-            throw new Error('End date cannot be before start date');
+            throw new AppError('End date cannot be before start date', 400);
         }
     }
 
@@ -60,7 +61,7 @@ export async function createSession(userId: number, input: CreateSessionInput): 
 
 export async function updateUserSession(sessionId: number, userId: number, input: UpdateSessionInput): Promise<Session> {
     if (!Number.isInteger(sessionId) || sessionId <= 0) {
-        throw new Error('Invalid session id');
+        throw new AppError('Invalid session id', 400);
     }
 
     const title = input.title?.trim() || undefined;
@@ -68,15 +69,15 @@ export async function updateUserSession(sessionId: number, userId: number, input
     const notes = input.notes?.trim() || undefined;
 
     if (title !== undefined && title.length < 2) {
-        throw new Error('Session title must be at least 2 characters');
+        throw new AppError('Session title must be at least 2 characters', 400);
     }
 
     if (input.started_at && !isValidDate(input.started_at)) {
-        throw new Error('Invalid start date');
+        throw new AppError('Invalid start date', 400);
     }
 
     if (input.ended_at && !isValidDate(input.ended_at)) {
-        throw new Error('Invalid end date');
+        throw new AppError('Invalid end date', 400);
     }
 
     if (input.started_at && input.ended_at) {
@@ -84,7 +85,7 @@ export async function updateUserSession(sessionId: number, userId: number, input
         const endedAt = new Date(input.ended_at);
 
         if (endedAt < startedAt) {
-            throw new Error('End date cannot be before start date');
+            throw new AppError('End date cannot be before start date', 400);
         }
     }
 
@@ -98,7 +99,7 @@ export async function updateUserSession(sessionId: number, userId: number, input
     );
 
     if (!session) {
-        throw new Error('Session not found');
+        throw new AppError('Session not found', 404);
     }
 
     return session;
@@ -106,12 +107,12 @@ export async function updateUserSession(sessionId: number, userId: number, input
 
 export async function deleteUserSession(sessionId: number, userId: number): Promise<void> {
     if (!Number.isInteger(sessionId) || sessionId <= 0) {
-        throw new Error('Invalid session id');
+        throw new AppError('Invalid session id', 400);
     }
 
     const deleted = await sessionRepository.deleteSessionByIdAndUserId(sessionId, userId);
 
     if (!deleted) {
-        throw new Error('Session not found');
+        throw new AppError('Session not found', 404);
     }
 }

@@ -1,13 +1,14 @@
-import { Router }           from 'express';
+import { Router }            from 'express';
 import { authenticateToken } from "../middleware/authMiddleware";
-import * as fishController  from '../controllers/fishController';
+import * as fishController   from '../controllers/fishController';
+import { asyncHandler }       from "../utils/asyncHandler";
 
 const router = Router();
 
-router.get('/', fishController.getAllFish);
-router.post('/', authenticateToken, fishController.createFish);
-router.patch('/:id', authenticateToken, fishController.updateFish);
-router.patch('/:id/deactivate', authenticateToken, fishController.deactivateFish);
-router.patch('/:id/activate', authenticateToken, fishController.activateFish);
+router.get('/', asyncHandler(fishController.getAllFish));
+router.post('/', authenticateToken, asyncHandler(fishController.createFish));
+router.patch('/:id', authenticateToken, asyncHandler(fishController.updateFish));
+router.patch('/:id/deactivate', authenticateToken, asyncHandler(fishController.deactivateFish));
+router.patch('/:id/activate', authenticateToken, asyncHandler(fishController.activateFish));
 
 export default router;

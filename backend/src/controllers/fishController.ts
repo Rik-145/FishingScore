@@ -1,89 +1,51 @@
 import { Request, Response } from 'express';
 import * as fishService      from '../services/fishService';
+import { AppError }          from "../utils/AppError";
 
 export async function getAllFish(req: Request, res: Response): Promise<void> {
-    try {
-        const fish = await fishService.getAllFish();
+    const fish = await fishService.getAllFish();
 
-        res.json(fish);
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to fetch fish",
-        });
-    }
+    res.json(fish);
 }
 
 export async function createFish(req: Request, res: Response): Promise<void> {
-    try {
-        const fish = await fishService.createFish(req.body);
+    const fish = await fishService.createFish(req.body);
 
-        res.status(201).json(fish);
-    } catch (error) {
-        res.status(400).json({
-            message: error instanceof Error ? error.message : "Failed to create fish",
-        });
-    }
+    res.status(201).json(fish);
 }
 
 export async function updateFish(req: Request, res: Response): Promise<void> {
-    try {
-        const fishId = Number(req.params.id);
+    const fishId = Number(req.params.id);
 
-        if (Number.isNaN(fishId)) {
-            res.status(400).json({
-                message: 'Invalid fish id',
-            });
-            return;
-        }
-
-        const fish = await fishService.updateFish(fishId, req.body);
-
-        res.json(fish);
-    } catch (error) {
-        res.status(400).json({
-            message: error instanceof Error ? error.message : "Failed to update fish"
-        });
+    if (Number.isNaN(fishId)) {
+        throw new AppError('Invalid fish id', 400);
     }
+
+    const fish = await fishService.updateFish(fishId, req.body);
+
+    res.json(fish);
 }
 
 export async function deactivateFish(req: Request, res: Response): Promise<void> {
-    try {
-        const fishId = Number(req.params.id);
+    const fishId = Number(req.params.id);
 
-        if (Number.isNaN(fishId)) {
-            res.status(400).json({
-                message: 'Invalid fish id',
-            });
-            return;
-        }
-
-        const fish = await fishService.setFishActiveStatus(fishId, false);
-
-        res.json(fish);
-    } catch (error) {
-        res.status(400).json({
-            message: error instanceof Error ? error.message : "Failed to deactivate fish"
-        });
+    if (Number.isNaN(fishId)) {
+        throw new AppError('Invalid fish id', 400);
     }
+
+    const fish = await fishService.setFishActiveStatus(fishId, false);
+
+    res.json(fish);
 }
 
 export async function activateFish(req: Request, res: Response): Promise<void> {
-    try {
-        const fishId = Number(req.params.id);
+    const fishId = Number(req.params.id);
 
-        if (Number.isNaN(fishId)) {
-            res.status(400).json({
-                message: 'Invalid fish id',
-            });
-            return;
-        }
-
-        const fish = await fishService.setFishActiveStatus(fishId, true);
-
-        res.json(fish);
-    } catch (error) {
-        res.status(400).json({
-            message: error instanceof Error ? error.message : "Failed to activate fish",
-        });
+    if (Number.isNaN(fishId)) {
+        throw new AppError('Invalid fish id', 400);
     }
+
+    const fish = await fishService.setFishActiveStatus(fishId, true);
+
+    res.json(fish);
 }

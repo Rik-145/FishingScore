@@ -2,6 +2,7 @@ import { Catch, CreateCatchInput, UpdateCatchInput } from "../types/catch";
 import * as catchRepository                          from '../repositories/catchRepository';
 import * as fishRepository                           from '../repositories/fishRepository';
 import * as sessionRepository                        from '../repositories/sessionRepository';
+import { AppError }                                  from "../utils/AppError";
 
 function isValidDate(value: string): boolean {
     const date = new Date(value);
@@ -11,7 +12,7 @@ function isValidDate(value: string): boolean {
 
 function validatePositiveInteger(value: number, fieldName: string): void {
     if (!Number.isInteger(value) || value <= 0) {
-        throw new Error(`${fieldName} must be a positive integer`);
+        throw new AppError(`${fieldName} must be a positive integer`, 400);
     }
 }
 
@@ -21,7 +22,7 @@ function validateOptionalPositiveNumber(value: number | null | undefined, fieldN
     }
 
     if (typeof value !== 'number' || Number.isNaN(value) || value <= 0) {
-        throw new Error(`${fieldName} must be a positive number`);
+        throw new AppError(`${fieldName} must be a positive number`, 400);
     }
 }
 
@@ -34,7 +35,7 @@ export async function getUserCatchById(catchId: number, userId: number): Promise
     const catchItem = await catchRepository.findCatchByIdAndUserId(catchId, userId);
 
     if (!catchItem) {
-        throw new Error('Catch not found');
+        throw new AppError('Catch not found', 404);
     }
 
     return catchItem;
@@ -48,19 +49,19 @@ export async function createCatch(userId: number, input: CreateCatchInput): Prom
     validateOptionalPositiveNumber(input.length_cm, 'Length');
 
     if (input.caught_at && !isValidDate(input.caught_at)) {
-        throw new Error('Invalid caught date');
+        throw new AppError('Invalid caught date', 400);
     }
 
     const session = await sessionRepository.findSessionByIdAndUserId(input.session_id, userId);
 
     if (!session) {
-        throw new Error('Session not found');
+        throw new AppError('Session not found', 404);
     }
 
     const fish = await fishRepository.findFishById(input.fish_id);
 
     if (!fish) {
-        throw new Error('Fish not found');
+        throw new AppError('Fish not found', 404);
     }
 
     const notes = input.notes?.trim() || null;
@@ -84,7 +85,7 @@ export async function updateUserCatch(catchId: number, userId: number, input: Up
         const fish = await fishRepository.findFishById(input.fish_id);
 
         if (!fish) {
-            throw new Error('Fish not found');
+            throw new AppError('Fish not found', 404);
         }
     }
 
@@ -94,7 +95,7 @@ export async function updateUserCatch(catchId: number, userId: number, input: Up
         const session = await sessionRepository.findSessionByIdAndUserId(input.session_id, userId);
 
         if (!session) {
-            throw new Error('Session not found');
+            throw new AppError('Session not found', 404);
         }
     }
 
@@ -102,7 +103,7 @@ export async function updateUserCatch(catchId: number, userId: number, input: Up
     validateOptionalPositiveNumber(input.length_cm, 'Length');
 
     if (input.caught_at && !isValidDate(input.caught_at)) {
-        throw new Error('Invalid caught date');
+        throw new AppError('Invalid caught date', 400);
     }
 
     const notes = input.notes?.trim() || undefined;
@@ -115,7 +116,7 @@ export async function updateUserCatch(catchId: number, userId: number, input: Up
     );
 
     if (!catchItem) {
-        throw new Error('Catch not found');
+        throw new AppError('Catch not found', 404);
     }
 
     return catchItem;
@@ -127,6 +128,6 @@ export async function deleteUserCatch(catchId: number, userId: number): Promise<
     const deleted = await catchRepository.deleteCatchByIdAndUserId(catchId, userId);
 
     if (!deleted) {
-        throw new Error('Catch not found');
+        throw new AppError('Catch not found', 404);
     }
 }
