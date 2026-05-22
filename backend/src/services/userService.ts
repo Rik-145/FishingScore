@@ -1,10 +1,11 @@
 import bcrypt                                                                          from 'bcrypt';
-import { ChangePasswordInput, DeactivateAccountInput, PublicUser, UpdateProfileInput } from "../types/user";
-import * as userRepository                                                             from "../repositories/userRepository";
+import { ChangePasswordInput, DeactivateAccountInput, PublicUser, UpdateProfileInput } from '../types/user';
+import * as userRepository                                                             from '../repositories/userRepository';
+import { AppError }                                                                    from '../utils/AppError';
 
 function validateUsername(username: string): void {
     if (username.length < 3) {
-        throw new Error("Username must have at least 3 characters");
+        throw new AppError('Username must have at least 3 characters', 400);
     }
 }
 
@@ -12,13 +13,13 @@ function validateEmail(email: string): void {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
-        throw new Error('Invalid email');
+        throw new AppError('Invalid email', 400);
     }
 }
 
 function validatePassword(password: string): void {
     if (password.length < 6) {
-        throw new Error("Password must be at least 6 characters");
+        throw new AppError('Password must be at least 6 characters', 400);
     }
 }
 
@@ -36,14 +37,14 @@ export async function updateProfile(userId: number, input: UpdateProfileInput): 
         const existingUser = await userRepository.findUserByEmail(email);
 
         if (existingUser && existingUser.id !== userId) {
-            throw new Error("Email is already in use");
+            throw new AppError('Email is already in use', 409);
         }
     }
 
     const user = await userRepository.updateUserProfile(userId, { username, email });
 
     if (!user) {
-        throw new Error("User not found");
+        throw new AppError('User not found', 404);
     }
 
     return user;
@@ -55,13 +56,13 @@ export async function changePassword(userId: number, input: ChangePasswordInput)
     const user = await userRepository.findPublicUserById(userId);
 
     if (!user || !user.is_active) {
-        throw new Error("User not found");
+        throw new AppError('User not found', 404);
     }
 
     const userWithPassword = await userRepository.findUserByEmail(user.email);
 
     if (!userWithPassword) {
-        throw new Error("User not found");
+        throw new AppError('User not found', 404);
     }
 
     const passwordMatches = await bcrypt.compare(
@@ -70,7 +71,7 @@ export async function changePassword(userId: number, input: ChangePasswordInput)
     );
 
     if (!passwordMatches) {
-        throw new Error("Current password is incorrect");
+        throw new AppError('Current password is incorrect', 401);
     }
 
     const passwordHash = await bcrypt.hash(input.new_password, 10);
@@ -82,13 +83,13 @@ export async function deactivateAccount(userId: number, input: DeactivateAccount
     const user = await userRepository.findPublicUserById(userId);
 
     if (!user || !user.is_active) {
-        throw new Error("User not found");
+        throw new AppError('User not found', 404);
     }
 
     const userWithPassword = await userRepository.findUserByEmail(user.email);
 
     if (!userWithPassword) {
-        throw new Error("User not found");
+        throw new AppError('User not found', 404);
     }
 
     const passwordMatches = await bcrypt.compare(
@@ -97,12 +98,12 @@ export async function deactivateAccount(userId: number, input: DeactivateAccount
     );
 
     if (!passwordMatches) {
-        throw new Error("Current password is incorrect");
+        throw new AppError('Current password is incorrect', 401);
     }
 
     const deactivated = await userRepository.deactivateUser(userId);
 
     if (!deactivated) {
-        throw new Error("User not found");
+        throw new AppError('User not found', 404);
     }
 }
