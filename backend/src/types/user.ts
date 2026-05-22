@@ -39,3 +39,17 @@ export interface LoginInput {
     email: string;
     password: string;
 }
+
+export interface UpdateProfileInput {
+    username?: string;
+    email?: string;
+}
+
+export interface ChangePasswordInput {
+    current_password: string;
+    new_password: string;
+}
+
+export interface DeactivateAccountInput {
+    current_password: string;
+}
