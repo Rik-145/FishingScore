@@ -1,12 +1,13 @@
-import express       from 'express';
-import cors          from 'cors';
-import dotenv        from 'dotenv';
-import { pool }      from "./db/pool";
-import fishRoutes    from "./routes/fishRoutes";
-import authRoutes    from "./routes/authRoutes";
-import sessionRoutes from "./routes/sessionRoutes";
-import catchRoutes   from "./routes/catchRoutes";
-import userRoutes    from "./routes/userRoutes";
+import express         from 'express';
+import cors            from 'cors';
+import dotenv          from 'dotenv';
+import { pool }        from "./db/pool";
+import fishRoutes      from "./routes/fishRoutes";
+import authRoutes      from "./routes/authRoutes";
+import sessionRoutes   from "./routes/sessionRoutes";
+import catchRoutes     from "./routes/catchRoutes";
+import userRoutes      from "./routes/userRoutes";
+import { errorHandler } from "./middleware/errorHandler";
 
 dotenv.config();
 
@@ -44,6 +45,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/catches', catchRoutes);
 app.use('/api/users', userRoutes);
+
+app.use(errorHandler);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
