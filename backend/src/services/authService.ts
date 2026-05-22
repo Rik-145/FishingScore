@@ -2,6 +2,7 @@ import bcrypt                                    from 'bcrypt';
 import jwt                                       from 'jsonwebtoken';
 import { LoginInput, PublicUser, RegisterInput } from "../types/user";
 import * as userRepository                       from '../repositories/userRepository';
+import { AppError }                              from "../utils/AppError";
 
 interface AuthResult {
     user: PublicUser;
@@ -12,7 +13,7 @@ function createToken(user: PublicUser): string {
     const jwtSecret = process.env.JWT_SECRET;
 
     if (!jwtSecret) {
-        throw new Error('JWT secret is not configured');
+        throw new AppError('JWT secret is not configured', 500);
     }
 
     return jwt.sign(
@@ -32,17 +33,17 @@ export async function register(input: RegisterInput): Promise<AuthResult> {
     const email = input.email.trim().toLowerCase();
 
     if (username.length < 3) {
-        throw new Error('Username must have at least 3 characters');
+        throw new AppError('Username must have at least 3 characters', 400);
     }
 
     if (input.password.length < 6) {
-        throw new Error('Password must have at least 6 characters');
+        throw new AppError('Password must have at least 6 characters', 400);
     }
 
     const existingUser = await userRepository.findUserByEmail(email);
 
     if (existingUser) {
-        throw new Error('Email is already in use');
+        throw new AppError('Email is already in use', 409);
     }
 
     const passwordHash = await bcrypt.hash(input.password, 10);
@@ -67,13 +68,13 @@ export async function login(input: LoginInput): Promise<AuthResult> {
     const user = await userRepository.findUserByEmail(email);
 
     if (!user || !user.is_active) {
-        throw new Error('Invalid email or password');
+        throw new AppError('Invalid email or password', 401);
     }
 
     const passwordMatches = await bcrypt.compare(input.password, user.password_hash);
 
     if (!passwordMatches) {
-        throw new Error('Invalid email or password');
+        throw new AppError('Invalid email or password', 401);
     }
 
     await userRepository.updateLastLogin(user.id);
