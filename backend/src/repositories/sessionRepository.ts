@@ -135,3 +135,32 @@ export async function deleteSessionByIdAndUserId(sessionId: number, userId: numb
 
     return (result.rowCount ?? 0) > 0;
 }
+
+export async function finishSessionByIdAndUserId(sessionId: number, userId: number): Promise<Session | null> {
+    const result = await pool.query<Session>(
+        `
+            UPDATE sessions
+            SET ended_at   = NOW(),
+                updated_at = NOW()
+            WHERE id = $1
+              AND user_id = $2
+              AND ended_at IS NULL 
+            RETURNING
+                id,
+                user_id,
+                title,
+                location,
+                started_at,
+                ended_at,
+                notes,
+                created_at,
+                updated_at
+        `,
+        [
+            sessionId,
+            userId
+        ]
+    );
+
+    return result.rows[0] ?? null;
+}

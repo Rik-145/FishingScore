@@ -116,3 +116,17 @@ export async function deleteUserSession(sessionId: number, userId: number): Prom
         throw new AppError('Session not found', 404);
     }
 }
+
+export async function finishUserSession(sessionId: number, userId: number): Promise<Session> {
+    if (!Number.isInteger(sessionId) || sessionId <= 0) {
+        throw new AppError('Invalid session id', 400);
+    }
+
+    const session = await sessionRepository.finishSessionByIdAndUserId(sessionId, userId);
+
+    if (!session) {
+        throw new AppError('Session not found or already finished', 404);
+    }
+
+    return session;
+}

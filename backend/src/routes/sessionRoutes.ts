@@ -8,6 +8,7 @@ const router = Router();
 router.get('/', authenticateToken, asyncHandler(sessionController.getMySessions));
 router.get('/:id', authenticateToken, asyncHandler(sessionController.getMySessionById));
 router.post('/', authenticateToken, asyncHandler(sessionController.createSession));
+router.patch('/:id/finish', authenticateToken, asyncHandler(sessionController.finishMySession));
 router.patch('/:id', authenticateToken, asyncHandler(sessionController.updateMySession));
 router.delete('/:id', authenticateToken, asyncHandler(sessionController.deleteMySession));
 
