@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt                                 from 'jsonwebtoken';
 import { AppError }                        from "../utils/AppError";
+import { UserRole }                         from "../types/user";
 
 interface JwtPayload {
     userId: number;
-    role: string;
+    role: UserRole;
 }
 
 export interface AuthenticatedRequest extends Request {
