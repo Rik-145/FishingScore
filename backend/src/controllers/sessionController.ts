@@ -74,3 +74,19 @@ export async function deleteMySession(req: AuthenticatedRequest, res: Response):
 
     res.status(204).send();
 }
+
+export async function finishMySession(req: AuthenticatedRequest, res: Response): Promise<void> {
+    if (!req.user) {
+        throw new AppError('Unauthenticated', 401);
+    }
+
+    const sessionId = Number(req.params.id);
+
+    if (Number.isNaN(sessionId)) {
+        throw new AppError('Invalid session id', 400);
+    }
+
+    const session = await sessionService.finishUserSession(sessionId, req.user.userId);
+
+    res.json(session);
+}
