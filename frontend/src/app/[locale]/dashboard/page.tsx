@@ -6,12 +6,21 @@ import { getMe }                 from '@/services/authService';
 import { getToken, removeToken } from '@/lib/authStorage';
 import { useRouter }             from '@/i18n/navigation';
 import type { PublicUser }       from '@/types/user';
+import { getMySessions }         from '@/services/sessionService';
+import { getMyScore }            from '@/services/scoreService';
+import { getMyCatches }          from '@/services/catchService';
+import type { Session }          from '@/types/session';
+import type { Catch }            from '@/types/catch';
+import type { LeaderboardEntry } from '@/types/score';
 
 export default function DashboardPage() {
     const router = useRouter();
     const t = useTranslations('DashboardPage');
 
     const [user, setUser] = useState<PublicUser | null>(null);
+    const [score, setScore] = useState<LeaderboardEntry | null>(null);
+    const [sessions, setSessions] = useState<Session[]>([]);
+    const [catches, setCatches] = useState<Catch[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -24,8 +33,17 @@ export default function DashboardPage() {
             }
 
             try {
-                const currentUser = await getMe(token);
+                const [currentUser, currentScore, currentSessions, currentCatches] = await Promise.all([
+                    getMe(token),
+                    getMyScore(token),
+                    getMySessions(token),
+                    getMyCatches(token),
+                ]);
+
                 setUser(currentUser);
+                setScore(currentScore);
+                setSessions(currentSessions);
+                setCatches(currentCatches);
             } catch {
                 removeToken();
                 router.push('/login');
@@ -81,30 +99,91 @@ export default function DashboardPage() {
                 <div className="mt-10 grid gap-4 md:grid-cols-3">
                     <article className="rounded-lg border border-slate-200 bg-white p-6">
                         <h2 className="font-bold text-slate-950">
-                            {t('sessions')}
+                            {t('totalScore')}
                         </h2>
-                        <p className="mt-2 text-sm leading-6 text-slate-600">
-                            {t('sessionsDescription')}
+                        <p className="mt-3 text-4xl font-bold text-slate-950">
+                            {score?.total_score ?? 0}
                         </p>
                     </article>
 
                     <article className="rounded-lg border border-slate-200 bg-white p-6">
                         <h2 className="font-bold text-slate-950">
-                            {t('catches')}
+                            {t('totalSessions')}
                         </h2>
-                        <p className="mt-2 text-sm leading-6 text-slate-600">
-                            {t('catchesDescription')}
+                        <p className="mt-3 text-4xl font-bold text-slate-950">
+                            {sessions.length}
                         </p>
                     </article>
 
                     <article className="rounded-lg border border-slate-200 bg-white p-6">
                         <h2 className="font-bold text-slate-950">
-                            {t('score')}
+                            {t('totalCatches')}
                         </h2>
-                        <p className="mt-2 text-sm leading-6 text-slate-600">
-                            {t('scoreDescription')}
+                        <p className="mt-3 text-4xl font-bold text-slate-950">
+                            {catches.length}
                         </p>
                     </article>
+                </div>
+
+                <div className="mt-8 grid gap-6 lg:grid-cols-2">
+                    <section className="rounded-lg border border-slate-200 bg-white p-6">
+                        <h2 className="text-lg font-bold text-slate-950">
+                            {t('recentSessions')}
+                        </h2>
+
+                        <div className="mt-4 grid gap-3">
+                            {sessions.slice(0, 5).map((session) => (
+                                <article
+                                    key={session.id}
+                                    className="rounded-md border border-slate-200 p-4"
+                                >
+                                    <h3 className="font-semibold text-slate-950">
+                                        {session.title ?? t('untitledSession')}
+                                    </h3>
+                                    <p className="mt-1 text-sm text-slate-600">
+                                        {session.location ?? t('noLocation')}
+                                    </p>
+                                </article>
+                            ))}
+
+                            {sessions.length === 0 && (
+                                <p className="text-sm text-slate-600">
+                                    {t('noSessions')}
+                                </p>
+                            )}
+                        </div>
+                    </section>
+
+                    <section className="rounded-lg border border-slate-200 bg-white p-6">
+                        <h2 className="text-lg font-bold text-slate-950">
+                            {t('recentCatches')}
+                        </h2>
+
+                        <div className="mt-4 grid gap-3">
+                            {catches.slice(0, 5).map((catchItem) => (
+                                <article
+                                    key={catchItem.id}
+                                    className="rounded-md border border-slate-200 p-4"
+                                >
+                                    <h3 className="font-semibold text-slate-950">
+                                        {t('catchNumber', { id: catchItem.id })}
+                                    </h3>
+                                    <p className="mt-1 text-sm text-slate-600">
+                                        {t('catchDetails', {
+                                            weight: catchItem.weight_grams ?? 0,
+                                            length: catchItem.length_cm ?? 0,
+                                        })}
+                                    </p>
+                                </article>
+                            ))}
+
+                            {catches.length === 0 && (
+                                <p className="text-sm text-slate-600">
+                                    {t('noCatches')}
+                                </p>
+                            )}
+                        </div>
+                    </section>
                 </div>
             </section>
         </main>

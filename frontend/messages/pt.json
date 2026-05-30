@@ -42,6 +42,17 @@
     "catches": "Capturas",
     "catchesDescription": "Adiciona capturas com espécie, peso, medida e notas.",
     "score": "Pontuação",
-    "scoreDescription": "Acompanha a tua pontuação e compara o teu progresso."
+    "scoreDescription": "Acompanha a tua pontuação e compara o teu progresso.",
+    "totalScore": "Pontuação total",
+    "totalSessions": "Total de sessões",
+    "totalCatches": "Total de capturas",
+    "recentSessions": "Sessões recentes",
+    "recentCatches": "Capturas recentes",
+    "untitledSession": "Sessão sem título",
+    "noLocation": "Sem local",
+    "noSessions": "Ainda não tens sessões",
+    "noCatches": "Ainda não tens capturas",
+    "catchNumber": "Captura #{id}",
+    "catchDetails": "{weight} g · {length} cm"
   }
 }
