@@ -42,6 +42,17 @@
     "catches": "Catches",
     "catchesDescription": "Add catches with species, weight, length and notes.",
     "score": "Score",
-    "scoreDescription": "Track your score and compare your progress."
+    "scoreDescription": "Track your score and compare your progress.",
+    "totalScore": "Total score",
+    "totalSessions": "Total sessions",
+    "totalCatches": "Total catches",
+    "recentSessions": "Recent sessions",
+    "recentCatches": "Recent catches",
+    "untitledSession": "Untitled session",
+    "noLocation": "No location",
+    "noSessions": "No sessions yet",
+    "noCatches": "No catches yet",
+    "catchNumber": "Catch #{id}",
+    "catchDetails": "{weight} g · {length} cm"
   }
 }
