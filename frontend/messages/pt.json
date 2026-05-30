@@ -1,0 +1,47 @@
+{
+  "HomePage": {
+    "eyebrow": "Fishing Score",
+    "title": "Regista as tuas sessões de pesca e compete por pontuação.",
+    "description": "Regista sessões, capturas, espécies de peixe, pesos e medidas. O FishingScore calcula a tua pontuação automaticamente e coloca os pescadores numa leaderboard.",
+    "login": "Entrar",
+    "createAccount": "Criar conta",
+    "sessionsTitle": "Sessões",
+    "sessionsDescription": "Cria sessões de pesca com local, hora de início, hora de fim e notas.",
+    "catchesTitle": "Capturas",
+    "catchesDescription": "Adiciona capturas a cada sessão e, se quiseres, inclui peso e medida.",
+    "leaderboardTitle": "Leaderboard",
+    "leaderboardDescription": "Compara pontuações totais com base nas capturas, medidas e duração da sessão."
+  },
+  "LoginPage": {
+    "title": "Entrar",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Entrar",
+    "submitting": "A entrar...",
+    "fallbackError": "Não foi possível entrar",
+    "doesntHaveAccount": "Ainda não tens conta?",
+    "register": "Criar conta"
+  },
+  "RegisterPage": {
+    "title": "Criar conta",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Criar conta",
+    "submitting": "A criar conta...",
+    "fallbackError": "Não foi possível criar a conta",
+    "alreadyHaveAccount": "Já tens conta?",
+    "login": "Entrar"
+  },
+  "DashboardPage": {
+    "loading": "A carregar dashboard...",
+    "title": "Bem-vindo, {username}",
+    "logout": "Sair",
+    "sessions": "Sessões",
+    "sessionsDescription": "Cria e gere as tuas sessões de pesca.",
+    "catches": "Capturas",
+    "catchesDescription": "Adiciona capturas com espécie, peso, medida e notas.",
+    "score": "Pontuação",
+    "scoreDescription": "Acompanha a tua pontuação e compara o teu progresso."
+  }
+}

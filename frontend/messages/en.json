@@ -1,0 +1,47 @@
+{
+  "HomePage": {
+    "eyebrow": "Fishing Score",
+    "title": "Track your fishing sessions and compete by score.",
+    "description": "Register your sessions, catches, fish species, weights and lengths. FishingScore calculates your score automatically and ranks anglers on a leaderboard.",
+    "login": "Login",
+    "createAccount": "Create account",
+    "sessionsTitle": "Sessions",
+    "sessionsDescription": "Create fishing sessions with location, start time, end time and notes.",
+    "catchesTitle": "Catches",
+    "catchesDescription": "Add catches to each session and optionally include weight and length.",
+    "leaderboardTitle": "Leaderboard",
+    "leaderboardDescription": "Compare total scores based on catches, measurements and session time."
+  },
+  "LoginPage": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "submitting": "Logging in...",
+    "fallbackError": "Failed to login",
+    "doesntHaveAccount": "Don't have an account?",
+    "register": "Register here"
+  },
+  "RegisterPage": {
+    "title": "Create account",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Create account",
+    "submitting": "Creating account...",
+    "fallbackError": "Failed to create account",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Login"
+  },
+  "DashboardPage": {
+    "loading": "Loading dashboard...",
+    "title": "Welcome, {username}",
+    "logout": "Logout",
+    "sessions": "Sessions",
+    "sessionsDescription": "Create and manage your fishing sessions.",
+    "catches": "Catches",
+    "catchesDescription": "Add catches with species, weight, length and notes.",
+    "score": "Score",
+    "scoreDescription": "Track your score and compare your progress."
+  }
+}
