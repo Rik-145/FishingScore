@@ -75,6 +75,17 @@
     "createError": "Não foi possível criar a sessão",
     "finishSession": "Fechar sessão",
     "finishing": "A fechar...",
-    "finishError": "Não foi possível fechar a sessão"
+    "finishError": "Não foi possível fechar a sessão",
+    "editTitle": "Editar sessão",
+    "saveButton": "Guardar alterações",
+    "saving": "A guardar...",
+    "editSession": "Editar",
+    "updateError": "Não foi possível atualizar a sessão",
+    "titleRequired": "O título da sessão tem de ter pelo menos 3 caracteres",
+    "locationRequired": "O local tem de ter pelo menos 3 caracteres",
+    "deleteSession": "Apagar",
+    "deleting": "A apagar...",
+    "deleteConfirmation": "Apagar esta sessão? Isto também apaga as capturas dessa sessão.",
+    "deleteError": "Não foi possível apagar a sessão"
   }
 }
