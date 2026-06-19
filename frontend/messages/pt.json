@@ -53,6 +53,28 @@
     "noSessions": "Ainda não tens sessões",
     "noCatches": "Ainda não tens capturas",
     "catchNumber": "Captura #{id}",
-    "catchDetails": "{weight} g · {length} cm"
+    "catchDetails": "{weight} g · {length} cm",
+    "manageSessions": "Gerir Sessões"
+  },
+  "SessionsPage": {
+    "title": "Sessões",
+    "description": "Vê e gere as tuas sessões de pesca.",
+    "loading": "A carregar sessões...",
+    "noSessions": "Ainda não tens sessões",
+    "untitledSession": "Sessão sem título",
+    "noLocation": "Sem local",
+    "startedAt": "Início",
+    "endedAt": "Fim",
+    "openSession": "Sessão aberta",
+    "createTitle": "Criar sessão",
+    "sessionTitle": "Título",
+    "location": "Local",
+    "notes": "Notas",
+    "createButton": "Criar sessão",
+    "creating": "A criar...",
+    "createError": "Não foi possível criar a sessão",
+    "finishSession": "Fechar sessão",
+    "finishing": "A fechar...",
+    "finishError": "Não foi possível fechar a sessão"
   }
 }

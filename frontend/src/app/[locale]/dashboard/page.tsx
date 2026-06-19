@@ -4,7 +4,7 @@ import { useEffect, useState }   from 'react';
 import { useTranslations }       from 'next-intl';
 import { getMe }                 from '@/services/authService';
 import { getToken, removeToken } from '@/lib/authStorage';
-import { useRouter }             from '@/i18n/navigation';
+import { Link, useRouter }       from '@/i18n/navigation';
 import type { PublicUser }       from '@/types/user';
 import { getMySessions }         from '@/services/sessionService';
 import { getMyScore }            from '@/services/scoreService';
@@ -123,6 +123,15 @@ export default function DashboardPage() {
                             {catches.length}
                         </p>
                     </article>
+                </div>
+
+                <div className="mt-6">
+                    <Link
+                        href="/sessions"
+                        className="inline-flex rounded-md bg-teal-700 px-4 py-3 font-bold text-white hover:bg-teal-800"
+                    >
+                        {t('manageSessions')}
+                    </Link>
                 </div>
 
                 <div className="mt-8 grid gap-6 lg:grid-cols-2">
