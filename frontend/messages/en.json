@@ -53,6 +53,28 @@
     "noSessions": "No sessions yet",
     "noCatches": "No catches yet",
     "catchNumber": "Catch #{id}",
-    "catchDetails": "{weight} g · {length} cm"
+    "catchDetails": "{weight} g · {length} cm",
+    "manageSessions": "Manage Sessions"
+  },
+  "SessionsPage": {
+    "title": "Sessions",
+    "description": "View and manage your fishing sessions.",
+    "loading": "Loading sessions...",
+    "noSessions": "No sessions yet",
+    "untitledSession": "Untitled session",
+    "noLocation": "No location",
+    "startedAt": "Started",
+    "endedAt": "Ended",
+    "openSession": "Open session",
+    "createTitle": "Create session",
+    "sessionTitle": "Title",
+    "location": "Location",
+    "notes": "Notes",
+    "createButton": "Create session",
+    "creating": "Creating...",
+    "createError": "Failed to create session",
+    "finishSession": "Finish session",
+    "finishing": "Finishing...",
+    "finishError": "Failed to finish session"
   }
 }
