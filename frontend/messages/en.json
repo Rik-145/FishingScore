@@ -75,6 +75,17 @@
     "createError": "Failed to create session",
     "finishSession": "Finish session",
     "finishing": "Finishing...",
-    "finishError": "Failed to finish session"
+    "finishError": "Failed to finish session",
+    "editTitle": "Edit session",
+    "saveButton": "Save changes",
+    "saving": "Saving...",
+    "editSession": "Edit",
+    "updateError": "Failed to update session",
+    "titleRequired": "Session title must have at least 3 characters",
+    "locationRequired": "Location must have at least 3 characters",
+    "deleteSession": "Delete",
+    "deleting": "Deleting...",
+    "deleteConfirmation": "Delete this session? This will also delete its catches.",
+    "deleteError": "Failed to delete session"
   }
 }

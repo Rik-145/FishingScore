@@ -1,11 +1,11 @@
 'use client';
 
-import { type FormEvent, useEffect, useState }         from 'react';
-import { useTranslations }                             from 'next-intl';
-import { useRouter }                                   from '@/i18n/navigation';
-import { getToken, removeToken }                       from '@/lib/authStorage';
-import { createSession, finishSession, getMySessions } from '@/services/sessionService';
-import type { Session }                                from '@/types/session';
+import { type FormEvent, useEffect, useState }                                       from 'react';
+import { useTranslations }                                                           from 'next-intl';
+import { useRouter }                                                                 from '@/i18n/navigation';
+import { getToken, removeToken }                                                     from '@/lib/authStorage';
+import { createSession, deleteSession, finishSession, getMySessions, updateSession } from '@/services/sessionService';
+import type { Session }                                                              from '@/types/session';
 
 export default function SessionsPage() {
     const router = useRouter();
@@ -19,6 +19,8 @@ export default function SessionsPage() {
     const [isCreating, setIsCreating] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [finishedSessionId, setFinishedSessionId] = useState<number | null>(null);
+    const [editingSessionId, setEditingSessionId] = useState<number | null>(null);
+    const [deletingSessionId, setDeletingSessionId] = useState<number | null>(null);
 
     useEffect(() => {
         async function loadSessions() {
@@ -43,7 +45,7 @@ export default function SessionsPage() {
         void loadSessions();
     }, [router]);
 
-    async function handleCreateSession(event: FormEvent<HTMLFormElement>) {
+    async function handleSubmitSession(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         const token = getToken();
@@ -53,25 +55,50 @@ export default function SessionsPage() {
             return;
         }
 
+        if (title.trim().length < 3) {
+            setErrorMessage(t('titleRequired'));
+            return;
+        }
+
+        if (location.trim().length < 3) {
+            setErrorMessage(t('locationRequired'));
+            return;
+        }
+
+        const sessionInput = {
+            title: title.trim(),
+            location: location.trim(),
+            notes: notes.trim() || undefined,
+        };
+
         setErrorMessage('');
         setIsCreating(true);
 
         try {
-            const session = await createSession(
-                {
-                    title,
-                    location,
-                    notes,
-                },
-                token,
-            );
+            if (editingSessionId) {
+                const updatedSession = await updateSession(
+                    editingSessionId,
+                    sessionInput,
+                    token,
+                );
 
-            setSessions((currentSessions) => [session, ...currentSessions]);
+                setSessions((currentSessions) =>
+                    currentSessions.map((session) =>
+                        session.id === editingSessionId ? updatedSession : session),
+                );
+
+                setEditingSessionId(null);
+            } else {
+                const session = await createSession(sessionInput, token);
+
+                setSessions((currentSessions) => [session, ...currentSessions]);
+            }
+
             setTitle('');
             setLocation('');
             setNotes('');
         } catch {
-            setErrorMessage(t('createError'));
+            setErrorMessage(editingSessionId ? t('updateError') : t('createError'));
         } finally {
             setIsCreating(false);
         }
@@ -103,6 +130,51 @@ export default function SessionsPage() {
         }
     }
 
+    async function handleEditSession(session: Session) {
+        setEditingSessionId(session.id);
+        setTitle(session.title ?? '');
+        setLocation(session.location ?? '');
+        setNotes(session.notes ?? '');
+        setErrorMessage('');
+    }
+
+    async function handleDeleteSession(sessionId: number) {
+        const confirmed = window.confirm(t('deleteConfirmation'));
+
+        if (!confirmed) {
+            return;
+        }
+
+        const token = getToken();
+
+        if (!token) {
+            router.push('/login');
+            return;
+        }
+
+        setErrorMessage('');
+        setDeletingSessionId(sessionId);
+
+        try {
+            await deleteSession(sessionId, token);
+
+            setSessions((currentSessions) =>
+                currentSessions.filter((session) => session.id !== sessionId),
+            );
+
+            if (editingSessionId === sessionId) {
+                setEditingSessionId(null);
+                setTitle('');
+                setLocation('');
+                setNotes('');
+            }
+        } catch {
+            setErrorMessage(t('deleteError'));
+        } finally {
+            setDeletingSessionId(null);
+        }
+    }
+
     if (loading) {
         return (
             <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
@@ -130,11 +202,11 @@ export default function SessionsPage() {
                 </div>
 
                 <form
-                    onSubmit={handleCreateSession}
+                    onSubmit={handleSubmitSession}
                     className="mt-8 grid gap-4 rounded-lg border border-slate-200 bg-white p-6"
                 >
                     <h2 className="text-lg font-bold text-slate-950">
-                        {t('createTitle')}
+                        {editingSessionId ? t('editTitle') : t('createTitle')}
                     </h2>
 
                     <div className="grid gap-4 md:grid-cols-2">
@@ -144,6 +216,8 @@ export default function SessionsPage() {
                                 type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
+                                required
+                                minLength={3}
                                 className="rounded-md border border-slate-300 px-4 py-3 text-base outline-none focus:border-teal-600"
                             />
                         </label>
@@ -154,6 +228,8 @@ export default function SessionsPage() {
                                 type="text"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
+                                required
+                                minLength={3}
                                 className="rounded-md border border-slate-300 px-4 py-3 text-base outline-none focus:border-teal-600"
                             />
                         </label>
@@ -179,7 +255,9 @@ export default function SessionsPage() {
                         disabled={isCreating}
                         className="w-fit rounded-md bg-teal-700 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
                     >
-                        {isCreating ? t('creating') : t('createButton')}
+                        {isCreating
+                            ? editingSessionId ? t('saving') : t('creating')
+                            : editingSessionId ? t('saveButton') : t('createButton')}
                     </button>
                 </form>
 
@@ -211,6 +289,16 @@ export default function SessionsPage() {
                             {!session.ended_at && (
                                 <button
                                     type="button"
+                                    onClick={() => handleEditSession(session)}
+                                    className="mt-4 mr-3 rounded-md border border-slate-300 bg-white px-4 py-2 font-bold text-slate-900 hover:border-teal-700"
+                                >
+                                    {t('editSession')}
+                                </button>
+                            )}
+
+                            {!session.ended_at && (
+                                <button
+                                    type="button"
                                     onClick={() => handleFinishSession(session.id)}
                                     disabled={finishedSessionId === session.id}
                                     className="mt-4 rounded-md border border-slate-300 bg-white px-4 py-2 font-bold text-slate-900 hover:border-teal-700 disabled:cursor-not-allowed disabled:opacity-70"
@@ -218,6 +306,15 @@ export default function SessionsPage() {
                                     {finishedSessionId === session.id ? t('finishing') : t('finishSession')}
                                 </button>
                             )}
+
+                            <button
+                                type="button"
+                                onClick={() => handleDeleteSession(session.id)}
+                                disabled={deletingSessionId === session.id}
+                                className="mt-4 ml-3 rounded-md border border-red-200 bg-white px-4 py-2 font-bold text-red-700 hover:border-red-500 disabled:cursor-not-allowed disabled:opacity-70"
+                            >
+                                {deletingSessionId === session.id ? t('deleting') : t('deleteSession')}
+                            </button>
                         </article>
                     ))}
 
