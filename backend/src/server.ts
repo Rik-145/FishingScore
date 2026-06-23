@@ -1,14 +1,13 @@
 import express          from 'express';
 import cors             from 'cors';
 import dotenv           from 'dotenv';
-import { pool }         from "./db/pool";
-import fishRoutes       from "./routes/fishRoutes";
-import authRoutes       from "./routes/authRoutes";
-import sessionRoutes    from "./routes/sessionRoutes";
-import catchRoutes      from "./routes/catchRoutes";
-import userRoutes       from "./routes/userRoutes";
-import { errorHandler } from "./middleware/errorHandler";
-import scoreRoutes      from "./routes/scoreRoutes";
+import fishRoutes       from './routes/fishRoutes';
+import authRoutes       from './routes/authRoutes';
+import sessionRoutes    from './routes/sessionRoutes';
+import catchRoutes      from './routes/catchRoutes';
+import userRoutes       from './routes/userRoutes';
+import { errorHandler } from './middleware/errorHandler';
+import scoreRoutes      from './routes/scoreRoutes';
 
 dotenv.config();
 
@@ -16,29 +15,28 @@ const app = express();
 
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+const allowedOrigins = process.env.CORS_ORIGIN
+    ?.split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean) ?? [];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+            callback(null, true);
+            return;
+        }
+
+        callback(new Error('Not allowed by CORS'));
+    },
+}));
+
 app.use(express.json());
 
 app.get('/', (req, res) => {
     res.json({
         message: 'FishingScore API is running!',
     });
-});
-
-app.get('/db-test', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT NOW()');
-        res.json({
-            connected: true,
-            time: result.rows[0].now
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            connected: false,
-            message: 'Database connection failed'
-        });
-    }
 });
 
 app.use('/api/fish', fishRoutes);
@@ -52,4 +50,4 @@ app.use(errorHandler);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
-})
+});
