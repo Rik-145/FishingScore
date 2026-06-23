@@ -1,19 +1,21 @@
 'use client';
 
-import { type FormEvent, useEffect, useMemo, useState } from 'react';
-import { useTranslations }                              from 'next-intl';
-import { useRouter }                                    from '@/i18n/navigation';
-import { getToken, removeToken }                               from '@/lib/authStorage';
+import { type FormEvent, useEffect, useMemo, useState }        from 'react';
+import { useTranslations }                                     from 'next-intl';
+import { useRouter }                                           from '@/i18n/navigation';
+import { removeToken }                                         from '@/lib/authStorage';
 import { createCatch, deleteCatch, getMyCatches, updateCatch } from '@/services/catchService';
 import { getMySessions }                                       from '@/services/sessionService';
-import { getAllFish }                                   from '@/services/fishService';
-import type { Catch }                                   from '@/types/catch';
-import type { Session }                                 from '@/types/session';
-import type { Fish }                                    from '@/types/fish';
+import { getAllFish }                                          from '@/services/fishService';
+import type { Catch }                                          from '@/types/catch';
+import type { Session }                                        from '@/types/session';
+import type { Fish }                                           from '@/types/fish';
+import { useAuthToken }                                        from '@/hooks/useAuthToken';
 
 export default function CatchesPage() {
     const router = useRouter();
     const t = useTranslations('CatchesPage');
+    const { requireToken } = useAuthToken();
 
     const [catches, setCatches] = useState<Catch[]>([]);
     const [sessions, setSessions] = useState<Session[]>([]);
@@ -31,10 +33,10 @@ export default function CatchesPage() {
 
     useEffect(() => {
         async function loadData() {
-            const token = getToken();
+            const token = requireToken();
 
             if (!token) {
-                router.push('/login');
+                setLoading(false);
                 return;
             }
 
@@ -57,7 +59,7 @@ export default function CatchesPage() {
         }
 
         void loadData();
-    }, [router]);
+    }, [router, requireToken]);
 
     const fishById = useMemo(() => {
         return new Map(fish.map((fishItem) => [fishItem.id, fishItem]));
@@ -71,13 +73,14 @@ export default function CatchesPage() {
         return sessions.filter((session) => !session.ended_at);
     }, [sessions]);
 
+    const sessionOptions = editingCatchId !== null ? sessions : openSessions;
+
     async function handleSubmitCatch(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        const token = getToken();
+        const token = requireToken();
 
         if (!token) {
-            router.push('/login');
             return;
         }
 
@@ -136,7 +139,7 @@ export default function CatchesPage() {
         }
     }
 
-    async function handleEditCatch(catchItem: Catch) {
+    function handleEditCatch(catchItem: Catch) {
         setEditingCatchId(catchItem.id);
         setSessionId(String(catchItem.session_id));
         setFishId(String(catchItem.fish_id));
@@ -146,17 +149,16 @@ export default function CatchesPage() {
         setErrorMessage('');
     }
 
-    async function handleDeleteCatch(catchId:number) {
-        const confirm = window.confirm(t('deleteConfirmation'));
+    async function handleDeleteCatch(catchId: number) {
+        const confirmed = window.confirm(t('deleteConfirmation'));
 
-        if (!confirm) {
+        if (!confirmed) {
             return;
         }
 
-        const token = getToken();
+        const token = requireToken();
 
         if (!token) {
-            router.push('/login');
             return;
         }
 
@@ -216,7 +218,7 @@ export default function CatchesPage() {
                     className="mt-8 grid gap-4 rounded-lg border border-slate-200 bg-white p-6"
                 >
                     <h2 className="text-lg font-bold text-slate-950">
-                        {isCreating ? t('editTitle') : t('createTitle')}
+                        {editingCatchId ? t('editTitle') : t('createTitle')}
                     </h2>
 
                     <div className="grid gap-4 md:grid-cols-2">
@@ -231,7 +233,7 @@ export default function CatchesPage() {
                                 <option value="">
                                     {t('selectSession')}
                                 </option>
-                                {openSessions.map((session) => (
+                                {sessionOptions.map((session) => (
                                     <option key={session.id} value={session.id}>
                                         {session.title ?? t('unknownSession')}
                                     </option>
@@ -351,9 +353,9 @@ export default function CatchesPage() {
 
                                 <div className="mt-4 flex flex-wrap gap-3">
                                     <button
-                                    type="button"
-                                    onClick={() => handleEditCatch(catchItem)}
-                                    className="rounded-md border border-slate-300 bg-white px-4 py-2 font-bold text-slate-900 hover:border-teal-700"
+                                        type="button"
+                                        onClick={() => handleEditCatch(catchItem)}
+                                        className="rounded-md border border-slate-300 bg-white px-4 py-2 font-bold text-slate-900 hover:border-teal-700"
                                     >
                                         {t('editCatch')}
                                     </button>
@@ -361,7 +363,8 @@ export default function CatchesPage() {
                                     <button
                                         type="button"
                                         onClick={() => handleDeleteCatch(catchItem.id)}
-                                        className="rounded-md border border-red-200 bg-white px-4 py-2 font-bold text-red-700 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-70"
+                                        disabled={deletingCatchId === catchItem.id}
+                                        className="rounded-md border border-red-200 bg-white px-4 py-2 font-bold text-red-700 hover:border-red-500 disabled:cursor-not-allowed disabled:opacity-70"
                                     >
                                         {deletingCatchId === catchItem.id ? t('deleting') : t('deleteCatch')}
                                     </button>

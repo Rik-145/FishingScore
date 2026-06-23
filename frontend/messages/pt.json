@@ -53,8 +53,13 @@
     "noSessions": "Ainda não tens sessões",
     "noCatches": "Ainda não tens capturas",
     "catchNumber": "Captura #{id}",
-    "catchDetails": "{weight} g · {length} cm",
-    "manageSessions": "Gerir Sessões"
+    "viewSessions": "Ver sessões",
+    "viewCatches": "Ver capturas",
+    "viewLeaderboard": "Ver leaderboard",
+    "weight": "Peso",
+    "length": "Medida",
+    "noWeight": "Sem peso",
+    "noLength": "Sem medida"
   },
   "SessionsPage": {
     "title": "Sessões",
