@@ -166,5 +166,15 @@
     "catches": "Capturas",
     "weight": "Peso",
     "length": "Medida"
+  },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "sessions": "Sessões",
+    "catches": "Capturas",
+    "fish": "Peixes",
+    "leaderboard": "Leaderboard",
+    "login": "Entrar",
+    "register": "Criar conta",
+    "logout": "Sair"
   }
 }
