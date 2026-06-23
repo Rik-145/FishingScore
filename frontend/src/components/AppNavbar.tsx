@@ -18,9 +18,12 @@ export default function AppNavbar() {
 
     useEffect(() => {
         async function loadUser() {
+            setIsLoading(true);
+
             const token = getToken();
 
             if (!token) {
+                setUser(null);
                 setIsLoading(false);
                 return;
             }
@@ -37,7 +40,7 @@ export default function AppNavbar() {
         }
 
         void loadUser();
-    }, []);
+    }, [pathname]);
 
     function handleLogout() {
         removeToken();

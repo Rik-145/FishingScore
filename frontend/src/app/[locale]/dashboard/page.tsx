@@ -3,7 +3,7 @@
 import { useEffect, useState }   from 'react';
 import { useTranslations }       from 'next-intl';
 import { getMe }                 from '@/services/authService';
-import { getToken, removeToken } from '@/lib/authStorage';
+import { removeToken }           from '@/lib/authStorage';
 import { Link, useRouter }       from '@/i18n/navigation';
 import type { PublicUser }       from '@/types/user';
 import { getMySessions }         from '@/services/sessionService';
@@ -12,10 +12,12 @@ import { getMyCatches }          from '@/services/catchService';
 import type { Session }          from '@/types/session';
 import type { Catch }            from '@/types/catch';
 import type { LeaderboardEntry } from '@/types/score';
+import { useAuthToken }          from '@/hooks/useAuthToken';
 
 export default function DashboardPage() {
     const router = useRouter();
     const t = useTranslations('DashboardPage');
+    const { requireToken } = useAuthToken();
 
     const [user, setUser] = useState<PublicUser | null>(null);
     const [score, setScore] = useState<LeaderboardEntry | null>(null);
@@ -25,10 +27,10 @@ export default function DashboardPage() {
 
     useEffect(() => {
         async function loadUser() {
-            const token = getToken();
+            const token = requireToken();
 
             if (!token) {
-                router.push('/login');
+                setIsLoading(false);
                 return;
             }
 
@@ -53,7 +55,7 @@ export default function DashboardPage() {
         }
 
         void loadUser();
-    }, [router]);
+    }, [router, requireToken]);
 
     function handleLogout() {
         removeToken();
@@ -104,6 +106,13 @@ export default function DashboardPage() {
                         <p className="mt-3 text-4xl font-bold text-slate-950">
                             {score?.total_score ?? 0}
                         </p>
+
+                        <Link
+                            href="/leaderboard"
+                            className="mt-4 inline-flex font-bold text-teal-700 hover:text-teal-800"
+                        >
+                            {t('viewLeaderboard')}
+                        </Link>
                     </article>
 
                     <article className="rounded-lg border border-slate-200 bg-white p-6">
@@ -113,6 +122,13 @@ export default function DashboardPage() {
                         <p className="mt-3 text-4xl font-bold text-slate-950">
                             {sessions.length}
                         </p>
+
+                        <Link
+                            href="/sessions"
+                            className="mt-4 inline-flex font-bold text-teal-700 hover:text-teal-800"
+                        >
+                            {t('viewSessions')}
+                        </Link>
                     </article>
 
                     <article className="rounded-lg border border-slate-200 bg-white p-6">
@@ -122,16 +138,14 @@ export default function DashboardPage() {
                         <p className="mt-3 text-4xl font-bold text-slate-950">
                             {catches.length}
                         </p>
-                    </article>
-                </div>
 
-                <div className="mt-6">
-                    <Link
-                        href="/sessions"
-                        className="inline-flex rounded-md bg-teal-700 px-4 py-3 font-bold text-white hover:bg-teal-800"
-                    >
-                        {t('manageSessions')}
-                    </Link>
+                        <Link
+                            href="/catches"
+                            className="mt-4 inline-flex font-bold text-teal-700 hover:text-teal-800"
+                        >
+                            {t('viewCatches')}
+                        </Link>
+                    </article>
                 </div>
 
                 <div className="mt-8 grid gap-6 lg:grid-cols-2">
@@ -177,12 +191,14 @@ export default function DashboardPage() {
                                     <h3 className="font-semibold text-slate-950">
                                         {t('catchNumber', { id: catchItem.id })}
                                     </h3>
-                                    <p className="mt-1 text-sm text-slate-600">
-                                        {t('catchDetails', {
-                                            weight: catchItem.weight_grams ?? 0,
-                                            length: catchItem.length_cm ?? 0,
-                                        })}
-                                    </p>
+                                    <div className="mt-1 grid gap-1 text-sm text-slate-600">
+                                        <p>
+                                            {t('weight')}: {catchItem.weight_grams ? `${catchItem.weight_grams} g` : t('noWeight')}
+                                        </p>
+                                        <p>
+                                            {t('length')}: {catchItem.length_cm ? `${catchItem.length_cm} cm` : t('noLength')}
+                                        </p>
+                                    </div>
                                 </article>
                             ))}
 

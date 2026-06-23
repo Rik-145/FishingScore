@@ -53,8 +53,13 @@
     "noSessions": "No sessions yet",
     "noCatches": "No catches yet",
     "catchNumber": "Catch #{id}",
-    "catchDetails": "{weight} g · {length} cm",
-    "manageSessions": "Manage Sessions"
+    "viewSessions": "View sessions",
+    "viewCatches": "View catches",
+    "viewLeaderboard": "View leaderboard",
+    "weight": "Weight",
+    "length": "Length",
+    "noWeight": "No weight",
+    "noLength": "No length"
   },
   "SessionsPage": {
     "title": "Sessions",
