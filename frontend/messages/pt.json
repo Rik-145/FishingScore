@@ -153,5 +153,18 @@
     "createError": "Não foi possível adicionar o peixe",
     "updateError": "Não foi possível atualizar o peixe",
     "statusError": "Não foi possível atualizar o estado do peixe"
+  },
+  "LeaderboardPage": {
+    "title": "Leaderboard",
+    "description": "Compara pescadores por pontuação total.",
+    "loading": "A carregar leaderboard...",
+    "noEntries": "Ainda não há entradas na leaderboard",
+    "rank": "Posição",
+    "angler": "Pescador",
+    "score": "Pontuação",
+    "sessions": "Sessões",
+    "catches": "Capturas",
+    "weight": "Peso",
+    "length": "Medida"
   }
 }

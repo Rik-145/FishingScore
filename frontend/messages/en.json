@@ -153,5 +153,18 @@
     "createError": "Failed to add fish",
     "updateError": "Failed to update fish",
     "statusError": "Failed to update fish status"
+  },
+  "LeaderboardPage": {
+    "title": "Leaderboard",
+    "description": "Compare anglers by total score.",
+    "loading": "Loading leaderboard...",
+    "noEntries": "No leaderboard entries yet",
+    "rank": "Rank",
+    "angler": "Angler",
+    "score": "Score",
+    "sessions": "Sessions",
+    "catches": "Catches",
+    "weight": "Weight",
+    "length": "Length"
   }
 }
