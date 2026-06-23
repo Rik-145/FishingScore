@@ -166,5 +166,15 @@
     "catches": "Catches",
     "weight": "Weight",
     "length": "Length"
+  },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "sessions": "Sessions",
+    "catches": "Catches",
+    "fish": "Fish",
+    "leaderboard": "Leaderboard",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
   }
 }
