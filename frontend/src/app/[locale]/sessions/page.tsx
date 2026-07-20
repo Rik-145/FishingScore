@@ -2,7 +2,7 @@
 
 import { type FormEvent, useEffect, useState }                                       from 'react';
 import { useTranslations }                                                           from 'next-intl';
-import { useRouter }                                                                 from '@/i18n/navigation';
+import { Link, useRouter }                                                           from '@/i18n/navigation';
 import { removeToken }                                                               from '@/lib/authStorage';
 import { createSession, deleteSession, finishSession, getMySessions, updateSession } from '@/services/sessionService';
 import type { Session }                                                              from '@/types/session';
@@ -185,16 +185,17 @@ export default function SessionsPage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 px-6 py-10">
+        <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 sm:py-10">
             <section className="mx-auto max-w-5xl">
                 <div>
                     <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
                         Fishing Score
                     </p>
 
-                    <h1 className="mt-2 text-4xl font-bold text-slate-950">
+                    <h1 className="mt-2 text-3xl font-bold text-slate-950 sm:text-4xl">
                         {t('title')}
                     </h1>
+
                     <p className="mt-3 text-slate-600">
                         {t('description')}
                     </p>
@@ -252,7 +253,7 @@ export default function SessionsPage() {
                     <button
                         type="submit"
                         disabled={isCreating}
-                        className="w-fit rounded-md bg-teal-700 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                        className="w-full rounded-md bg-teal-700 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-fit"
                     >
                         {isCreating
                             ? editingSessionId ? t('saving') : t('creating')
@@ -266,31 +267,65 @@ export default function SessionsPage() {
                             key={session.id}
                             className="rounded-lg border border-slate-200 bg-white p-6"
                         >
-                            <h2 className="font-bold text-slate-950">
-                                {session.title ?? t('untitledSession')}
-                            </h2>
+                            <div className="flex items-start justify-between gap-4">
+                                <div className="min-w-0">
+                                    <p className="text-sm font-bold text-teal-700">
+                                        {session.ended_at ? t('finishedSession') : t('openSession')}
+                                    </p>
 
-                            <p className="mt-2 text-sm text-slate-600">
-                                {session.location ?? t('noLocation')}
-                            </p>
+                                    <h2 className="mt-1 wrap-break-word text-xl font-bold text-slate-950">
+                                        {session.title ?? t('untitledSession')}
+                                    </h2>
 
-                            <div className="mt-4 grid gap-2 text-sm text-slate-600">
-                                <p>
-                                    {t('startedAt')}: {new Date(session.started_at).toLocaleString()}
-                                </p>
-                                <p>
-                                    {session.ended_at
-                                        ? `${t('endedAt')}: ${new Date(session.ended_at).toLocaleString()}`
-                                        : t('openSession')}
+                                    <p className="mt-1 text-sm text-slate-600">
+                                        {session.location ?? t('noLocation')}
+                                    </p>
+                                </div>
+
+                                <p className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-right text-xs font-semibold text-slate-700 sm:text-sm">
+                                    {new Date(session.started_at).toLocaleDateString()}
                                 </p>
                             </div>
 
-                            <div className="mt-4 flex flex-wrap gap-3">
+                            <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+                                <div className="rounded-md bg-slate-50 p-3">
+                                    <p className="font-semibold text-slate-500">
+                                        {t('startedAt')}
+                                    </p>
+
+                                    <p className="mt-1 font-bold text-slate-950">
+                                        {new Date(session.started_at).toLocaleTimeString()}
+                                    </p>
+                                </div>
+
+                                <div className="rounded-md bg-slate-50 p-3">
+                                    <p className="font-semibold text-slate-500">
+                                        {t('endedAt')}
+                                    </p>
+
+                                    <p className="mt-1 font-bold text-slate-950">
+                                        {session.ended_at ? new Date(session.ended_at).toLocaleTimeString() : '-'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <p className="mt-4 text-sm text-slate-600">
+                                {t('notes')}: {session.notes ?? t('noNotes')}
+                            </p>
+
+                            <div className="mt-5 grid gap-3 sm:flex sm:flex-wrap">
+                                    <Link
+                                        href={`/catches?sessionId=${session.id}`}
+                                        className="rounded-md bg-teal-700 px-4 py-3 text-center font-bold text-white hover:bg-teal-800"
+                                    >
+                                        {session.ended_at ? t('viewCatches') : t('addCatch')}
+                                    </Link>
+
                                 {!session.ended_at && (
                                     <button
                                         type="button"
                                         onClick={() => handleEditSession(session)}
-                                        className="rounded-md border border-slate-300 bg-white px-4 py-2 font-bold text-slate-900 hover:border-teal-700"
+                                        className="rounded-md border border-slate-300 bg-white px-4 py-3 text-center font-bold text-slate-900 hover:border-teal-700"
                                     >
                                         {t('editSession')}
                                     </button>
@@ -301,7 +336,7 @@ export default function SessionsPage() {
                                         type="button"
                                         onClick={() => handleFinishSession(session.id)}
                                         disabled={finishedSessionId === session.id}
-                                        className="rounded-md border border-slate-300 bg-white px-4 py-2 font-bold text-slate-900 hover:border-teal-700 disabled:cursor-not-allowed disabled:opacity-70"
+                                        className="rounded-md border border-slate-300 bg-white px-4 py-3 text-center font-bold text-slate-900 hover:border-teal-700 disabled:cursor-not-allowed disabled:opacity-70"
                                     >
                                         {finishedSessionId === session.id ? t('finishing') : t('finishSession')}
                                     </button>
@@ -311,7 +346,7 @@ export default function SessionsPage() {
                                     type="button"
                                     onClick={() => handleDeleteSession(session.id)}
                                     disabled={deletingSessionId === session.id}
-                                    className="rounded-md border border-red-200 bg-white px-4 py-2 font-bold text-red-700 hover:border-red-500 disabled:cursor-not-allowed disabled:opacity-70"
+                                    className="rounded-md border border-red-200 bg-white px-4 py-3 text-center font-bold text-red-700 hover:border-red-500 disabled:cursor-not-allowed disabled:opacity-70"
                                 >
                                     {deletingSessionId === session.id ? t('deleting') : t('deleteSession')}
                                 </button>

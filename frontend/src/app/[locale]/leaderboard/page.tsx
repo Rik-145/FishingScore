@@ -51,7 +51,86 @@ export default function LeaderboardPage() {
                     </p>
                 </div>
 
-                <div className="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+                <div className="mt-8 grid gap-4 md:hidden">
+                    {entries.map((entry, index) => (
+                        <article
+                            key={entry.user_id}
+                            className="rounded-lg border border-slate-200 bg-white p-5"
+                        >
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <p className="text-sm font-bold text-teal-700">
+                                        #{index + 1}
+                                    </p>
+
+                                    <h2 className="mt-1 text-lg font-bold text-slate-950">
+                                        {entry.username ?? '-'}
+                                    </h2>
+                                </div>
+
+                                <div className="text-right">
+                                    <p className="text-xs font-semibold uppercase text-slate-500">
+                                        {t('score')}
+                                    </p>
+
+                                    <p className="text-2xl font-bold text-slate-950">
+                                        {entry.total_score}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+                                <div className="rounded-md bg-slate-50 p-3">
+                                    <p className="font-semibold text-slate-500">
+                                        {t('sessions')}
+                                    </p>
+
+                                    <p className="mt-1 font-bold text-slate-950">
+                                        {entry.total_sessions}
+                                    </p>
+                                </div>
+
+                                <div className="rounded-md bg-slate-50 p-3">
+                                    <p className="font-semibold text-slate-500">
+                                        {t('catches')}
+                                    </p>
+
+                                    <p className="mt-1 font-bold text-slate-950">
+                                        {entry.total_catches}
+                                    </p>
+                                </div>
+
+                                <div className="rounded-md bg-slate-50 p-3">
+                                    <p className="font-semibold text-slate-500">
+                                        {t('weight')}
+                                    </p>
+
+                                    <p className="mt-1 font-bold text-slate-950">
+                                        {entry.total_weight_grams}g
+                                    </p>
+                                </div>
+
+                                <div className="rounded-md bg-slate-50 p-3">
+                                    <p className="font-semibold text-slate-500">
+                                        {t('length')}
+                                    </p>
+
+                                    <p className="mt-1 font-bold text-slate-950">
+                                        {entry.total_length_cm}cm
+                                    </p>
+                                </div>
+                            </div>
+                        </article>
+                    ))}
+
+                    {entries.length === 0 && (
+                        <p className="rounded-lg border border-slate-200 bg-white p-6 text-slate-600">
+                            {t('noEntries')}
+                        </p>
+                    )}
+                </div>
+
+                <div className="mt-8 hidden overflow-hidden rounded-lg border border-slate-200 bg-white md:block">
                     <div
                         className="grid grid-cols-8 gap-4 border-b border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700">
                         <span>
@@ -81,8 +160,8 @@ export default function LeaderboardPage() {
                             <span>{entry.total_score}</span>
                             <span>{entry.total_sessions}</span>
                             <span>{entry.total_catches}</span>
-                            <span>{entry.total_weight_grams} g</span>
-                            <span>{entry.total_length_cm} cm</span>
+                            <span>{entry.total_weight_grams}g</span>
+                            <span>{entry.total_length_cm}cm</span>
                         </div>
                     ))}
 

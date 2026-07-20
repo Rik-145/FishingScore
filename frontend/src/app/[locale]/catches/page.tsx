@@ -2,6 +2,7 @@
 
 import { type FormEvent, useEffect, useMemo, useState }        from 'react';
 import { useTranslations }                                     from 'next-intl';
+import { useSearchParams }                                     from 'next/navigation';
 import { useRouter }                                           from '@/i18n/navigation';
 import { removeToken }                                         from '@/lib/authStorage';
 import { createCatch, deleteCatch, getMyCatches, updateCatch } from '@/services/catchService';
@@ -16,6 +17,8 @@ export default function CatchesPage() {
     const router = useRouter();
     const t = useTranslations('CatchesPage');
     const { requireToken } = useAuthToken();
+    const searchParams = useSearchParams();
+    const selectedSessionId = searchParams.get('sessionId');
 
     const [catches, setCatches] = useState<Catch[]>([]);
     const [sessions, setSessions] = useState<Session[]>([]);
@@ -47,6 +50,16 @@ export default function CatchesPage() {
                     getAllFish(),
                 ]);
 
+                if (selectedSessionId) {
+                    const selectedSession = currentSessions.find(
+                        (session) => session.id === Number(selectedSessionId),
+                    );
+
+                    if (selectedSession && !selectedSession.ended_at) {
+                        setSessionId(selectedSessionId);
+                    }
+                }
+
                 setCatches(currentCatches);
                 setSessions(currentSessions);
                 setFish(currentFish);
@@ -59,7 +72,9 @@ export default function CatchesPage() {
         }
 
         void loadData();
-    }, [router, requireToken]);
+    }, [router, requireToken, selectedSessionId]);
+
+    const activeSessionId = sessionId || selectedSessionId;
 
     const fishById = useMemo(() => {
         return new Map(fish.map((fishItem) => [fishItem.id, fishItem]));
@@ -72,6 +87,14 @@ export default function CatchesPage() {
     const openSessions = useMemo(() => {
         return sessions.filter((session) => !session.ended_at);
     }, [sessions]);
+
+    const visibleCatches = useMemo(() => {
+        if (!activeSessionId) {
+            return [];
+        }
+
+        return catches.filter((catchItem) => catchItem.session_id === Number(activeSessionId));
+    }, [catches, activeSessionId]);
 
     const sessionOptions = editingCatchId !== null ? sessions : openSessions;
 
@@ -127,7 +150,7 @@ export default function CatchesPage() {
                 setCatches((currentCatches) => [catchItem, ...currentCatches]);
             }
 
-            setSessionId('');
+            setSessionId(editingCatchId ? '' : sessionId);
             setFishId('');
             setWeightGrams('');
             setLengthCm('');
@@ -198,16 +221,17 @@ export default function CatchesPage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 px-6 py-10">
+        <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 sm:py-10">
             <section className="mx-auto max-w-5xl">
                 <div>
                     <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
                         Fishing Score
                     </p>
 
-                    <h1 className="mt-2 text-4xl font-bold text-slate-950">
+                    <h1 className="mt-2 text-3xl font-bold text-slate-950 md:text-4xl">
                         {t('title')}
                     </h1>
+
                     <p className="mt-3 text-slate-600">
                         {t('description')}
                     </p>
@@ -302,7 +326,7 @@ export default function CatchesPage() {
                     <button
                         type="submit"
                         disabled={isCreating}
-                        className="w-fit rounded-md bg-teal-700 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                        className="w-full rounded-md bg-teal-700 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-fit"
                     >
                         {isCreating
                             ? editingCatchId ? t('saving') : t('creating')
@@ -312,7 +336,7 @@ export default function CatchesPage() {
                 </form>
 
                 <div className="mt-8 grid gap-4">
-                    {catches.map((catchItem) => {
+                    {visibleCatches.map((catchItem, index) => {
                         const fishItem = fishById.get(catchItem.fish_id);
                         const session = sessionById.get(catchItem.session_id);
 
@@ -321,41 +345,57 @@ export default function CatchesPage() {
                                 key={catchItem.id}
                                 className="rounded-lg border border-slate-200 bg-white p-6"
                             >
-                                <h2 className="font-bold text-slate-950">
-                                    {t('catchNumber', { id: catchItem.id })}
-                                </h2>
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-bold text-teal-700">
+                                            {t('catchNumber', { id: index + 1 })}
+                                        </p>
 
-                                <div className="mt-4 grid gap-2 text-sm text-slate-600">
-                                    <p>
-                                        {t('fish')}: {fishItem?.common_name ?? t('unknownFish')}
-                                    </p>
+                                        <h2 className="mt-1 wrap-break-word text-xl font-bold text-slate-950">
+                                            {fishItem?.common_name ?? t('unknownFish')}
+                                        </h2>
 
-                                    <p>
-                                        {t('session')}: {session?.title ?? t('unknownSession')}
-                                    </p>
+                                        <p className="mt-1 text-sm text-slate-600">
+                                            {session?.title ?? t('unknownSession')}
+                                        </p>
+                                    </div>
 
-                                    <p>
-                                        {t('weight')}: {catchItem.weight_grams ? `${catchItem.weight_grams} g` : t('noWeight')}
-                                    </p>
-
-                                    <p>
-                                        {t('length')}: {catchItem.length_cm ? `${catchItem.length_cm} cm` : t('noLength')}
-                                    </p>
-
-                                    <p>
-                                        {t('caughtAt')}: {new Date(catchItem.caught_at).toLocaleString()}
-                                    </p>
-
-                                    <p>
-                                        {t('notes')}: {catchItem.notes ?? t('noNotes')}
+                                    <p className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-right text-xs font-semibold text-slate-700 sm:text-sm">
+                                        {new Date(catchItem.caught_at).toLocaleDateString()}
                                     </p>
                                 </div>
 
-                                <div className="mt-4 flex flex-wrap gap-3">
+                                <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+                                    <div className="rounded-md bg-slate-50 p-3">
+                                        <p className="font-semibold text-slate-500">
+                                            {t('weight')}
+                                        </p>
+
+                                        <p className="mt-1 font-bold text-slate-950">
+                                            {catchItem.weight_grams ? `${Number(catchItem.weight_grams)} g` : t('noWeight')}
+                                        </p>
+                                    </div>
+
+                                    <div className="rounded-md bg-slate-50 p-3">
+                                        <p className="font-semibold text-slate-500">
+                                            {t('length')}
+                                        </p>
+
+                                        <p className="mt-1 font-bold text-slate-950">
+                                            {catchItem.length_cm ? `${Number(catchItem.length_cm)} cm` : t('noLength')}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <p className="mt-4 text-sm text-slate-600">
+                                    {t('notes')}: {catchItem.notes ?? t('noNotes')}
+                                </p>
+
+                                <div className="mt-5 grid gap-3 sm:flex sm:flex-wrap">
                                     <button
                                         type="button"
                                         onClick={() => handleEditCatch(catchItem)}
-                                        className="rounded-md border border-slate-300 bg-white px-4 py-2 font-bold text-slate-900 hover:border-teal-700"
+                                        className="rounded-md border border-slate-300 bg-white px-4 py-3 font-bold text-slate-900 hover:border-teal-700"
                                     >
                                         {t('editCatch')}
                                     </button>
@@ -364,7 +404,7 @@ export default function CatchesPage() {
                                         type="button"
                                         onClick={() => handleDeleteCatch(catchItem.id)}
                                         disabled={deletingCatchId === catchItem.id}
-                                        className="rounded-md border border-red-200 bg-white px-4 py-2 font-bold text-red-700 hover:border-red-500 disabled:cursor-not-allowed disabled:opacity-70"
+                                        className="rounded-md border border-red-200 bg-white px-4 py-3 font-bold text-red-700 hover:border-red-500 disabled:cursor-not-allowed disabled:opacity-70"
                                     >
                                         {deletingCatchId === catchItem.id ? t('deleting') : t('deleteCatch')}
                                     </button>
@@ -373,7 +413,13 @@ export default function CatchesPage() {
                         );
                     })}
 
-                    {catches.length === 0 && (
+                    {!activeSessionId && (
+                        <p className="rounded-lg border border-slate-200 bg-white p-6 text-slate-600">
+                            {t('selectSessionToViewCatches')}
+                        </p>
+                    )}
+
+                    {activeSessionId && visibleCatches.length === 0 && (
                         <p className="rounded-lg border border-slate-200 bg-white p-6 text-slate-600">
                             {t('noCatches')}
                         </p>

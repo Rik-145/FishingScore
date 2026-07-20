@@ -6,13 +6,14 @@ export default function HomePage() {
 
     return (
         <main className="min-h-screen bg-slate-50">
-            <section className="mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-16">
+            <section
+                className="mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-4 py-12 sm:px-6 sm:py-16">
                 <div className="max-w-3xl">
                     <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-teal-700">
                         {t('eyebrow')}
                     </p>
 
-                    <h1 className="text-5xl font-bold text-slate-950">
+                    <h1 className="text-4xl font-bold leading-tight text-slate-950 md:text-6xl">
                         {t('title')}
                     </h1>
 
@@ -20,46 +21,61 @@ export default function HomePage() {
                         {t('description')}
                     </p>
 
-                    <div className="mt-8 flex flex-wrap gap-3">
+                    <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
                         <Link
-                            href="/login"
-                            className="rounded-md bg-teal-700 px-5 py-3 font-bold text-white hover:bg-teal-800"
+                            href="/register"
+                            className="rounded-md bg-teal-700 px-5 py-3 text-center font-bold text-white hover:bg-teal-800"
                         >
-                            {t('login')}
+                            {t('createAccount')}
                         </Link>
 
                         <Link
-                            href="/register"
-                            className="rounded-md border border-slate-300 bg-white px-5 py-3 font-bold text-slate-900 hover:border-teal-700"
+                            href="/login"
+                            className="rounded-md border border-slate-300 bg-white px-5 py-3 text-center font-bold text-slate-900 hover:border-teal-700"
                         >
-                            {t('createAccount')}
+                            {t('login')}
                         </Link>
                     </div>
                 </div>
 
-                <div className="mt-16 grid gap-4 md:grid-cols-3">
-                    <article className="rounded-lg border border-slate-200 bg-white p-6">
-                        <h2 className="font-bold text-slate-950">
+                <div className="mt-14 grid gap-4 md:grid-cols-3">
+                    <article className="rounded-lg border border-slate-200 bg-white p-5">
+                        <p className="text-sm font-bold text-teal-700">
+                            01
+                        </p>
+
+                        <h2 className="mt-3 font-bold text-slate-950">
                             {t('sessionsTitle')}
                         </h2>
+
                         <p className="mt-2 text-sm leading-6 text-slate-600">
                             {t('sessionsDescription')}
                         </p>
                     </article>
 
-                    <article className="rounded-lg border border-slate-200 bg-white p-6">
-                        <h2 className="font-bold text-slate-950">
+                    <article className="rounded-lg border border-slate-200 bg-white p-5">
+                        <p className="text-sm font-bold text-teal-700">
+                            02
+                        </p>
+
+                        <h2 className="mt-3 font-bold text-slate-950">
                             {t('catchesTitle')}
                         </h2>
+
                         <p className="mt-2 text-sm leading-6 text-slate-600">
                             {t('catchesDescription')}
                         </p>
                     </article>
 
-                    <article className="rounded-lg border border-slate-200 bg-white p-6">
-                        <h2 className="font-bold text-slate-950">
+                    <article className="rounded-lg border border-slate-200 bg-white p-5">
+                        <p className="text-sm font-bold text-teal-700">
+                            03
+                        </p>
+
+                        <h2 className="mt-3 font-bold text-slate-950">
                             {t('leaderboardTitle')}
                         </h2>
+
                         <p className="mt-2 text-sm leading-6 text-slate-600">
                             {t('leaderboardDescription')}
                         </p>

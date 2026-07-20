@@ -59,7 +59,11 @@
     "weight": "Peso",
     "length": "Medida",
     "noWeight": "Sem peso",
-    "noLength": "Sem medida"
+    "noLength": "Sem medida",
+    "unknownFish": "Peixe desconhecido",
+    "finishedSession": "Terminada",
+    "openSession": "Aberta",
+    "catch": "Captura"
   },
   "SessionsPage": {
     "title": "Sessões",
@@ -91,7 +95,11 @@
     "deleteSession": "Apagar",
     "deleting": "A apagar...",
     "deleteConfirmation": "Apagar esta sessão? Isto também apaga as capturas dessa sessão.",
-    "deleteError": "Não foi possível apagar a sessão"
+    "deleteError": "Não foi possível apagar a sessão",
+    "addCatch": "Adicionar captura",
+    "finishedSession": "Terminada",
+    "noNotes": "Sem notas",
+    "viewCatches": "Ver capturas"
   },
   "CatchesPage": {
     "title": "Capturas",
@@ -127,7 +135,8 @@
     "deleting": "A apagar...",
     "deleteConfirmation": "Apagar esta captura?",
     "deleteError": "Não foi possível apagar a captura",
-    "updateError": "Não foi possível atualizar a captura"
+    "updateError": "Não foi possível atualizar a captura",
+    "selectSessionToViewCatches": "Escolhe uma sessão na página de sessões para veres as capturas."
   },
   "FishPage": {
     "title": "Peixes",
@@ -157,7 +166,8 @@
     "nameRequired": "O nome comum tem de ter pelo menos 2 caracteres",
     "createError": "Não foi possível adicionar o peixe",
     "updateError": "Não foi possível atualizar o peixe",
-    "statusError": "Não foi possível atualizar o estado do peixe"
+    "statusError": "Não foi possível atualizar o estado do peixe",
+    "managementMode": "Modo admin/moderador"
   },
   "LeaderboardPage": {
     "title": "Leaderboard",
@@ -180,6 +190,7 @@
     "leaderboard": "Leaderboard",
     "login": "Entrar",
     "register": "Criar conta",
-    "logout": "Sair"
+    "logout": "Sair",
+    "menu": "Menu"
   }
 }
