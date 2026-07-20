@@ -59,7 +59,11 @@
     "weight": "Weight",
     "length": "Length",
     "noWeight": "No weight",
-    "noLength": "No length"
+    "noLength": "No length",
+    "unknownFish": "Unknown fish",
+    "finishedSession": "Finished",
+    "openSession": "Open",
+    "catch": "Catch"
   },
   "SessionsPage": {
     "title": "Sessions",
@@ -91,7 +95,11 @@
     "deleteSession": "Delete",
     "deleting": "Deleting...",
     "deleteConfirmation": "Delete this session? This will also delete its catches.",
-    "deleteError": "Failed to delete session"
+    "deleteError": "Failed to delete session",
+    "addCatch": "Add catch",
+    "finishedSession": "Finished",
+    "noNotes": "No notes",
+    "viewCatches": "View catches"
   },
   "CatchesPage": {
     "title": "Catches",
@@ -127,7 +135,8 @@
     "deleting": "Deleting...",
     "deleteConfirmation": "Delete this catch?",
     "deleteError": "Failed to delete catch",
-    "updateError": "Failed to update catch"
+    "updateError": "Failed to update catch",
+    "selectSessionToViewCatches": "Choose a session from the sessions page to view its catches."
   },
   "FishPage": {
     "title": "Fish",
@@ -157,7 +166,8 @@
     "nameRequired": "Common name must have at least 2 characters",
     "createError": "Failed to add fish",
     "updateError": "Failed to update fish",
-    "statusError": "Failed to update fish status"
+    "statusError": "Failed to update fish status",
+    "managementMode": "Admin/Moderator mode"
   },
   "LeaderboardPage": {
     "title": "Leaderboard",
@@ -180,6 +190,7 @@
     "leaderboard": "Leaderboard",
     "login": "Login",
     "register": "Register",
-    "logout": "Logout"
+    "logout": "Logout",
+    "menu": "Menu"
   }
 }

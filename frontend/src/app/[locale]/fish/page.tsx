@@ -155,14 +155,14 @@ export default function FishPage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 px-6 py-10">
+        <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 sm:py-10">
             <section className="mx-auto max-w-5xl">
                 <div>
                     <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
                         Fishing Score
                     </p>
 
-                    <h1 className="mt-2 text-4xl font-bold text-slate-950">
+                    <h1 className="mt-2 text-3xl font-bold text-slate-950 md:text-4xl">
                         {t('title')}
                     </h1>
 
@@ -173,7 +173,7 @@ export default function FishPage() {
 
                 {canManageFish && (
                     <p className="mt-6 rounded-lg border border-teal-200 bg-teal-50 p-4 text-sm font-semibold text-slate-800">
-                        Admin/Moderator mode
+                        {t('managementMode')}
                     </p>
                 )}
 
@@ -233,7 +233,7 @@ export default function FishPage() {
                         <button
                             type="submit"
                             disabled={isSaving}
-                            className="w-fit rounded-md bg-teal-700 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                            className="w-full rounded-md bg-teal-700 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-fit"
                         >
                             {isSaving
                                 ? editingFishId ? t('saving') : t('creating')
@@ -250,31 +250,54 @@ export default function FishPage() {
                             className="rounded-lg border border-slate-200 bg-white p-6"
                         >
                             <div className="flex items-start justify-between gap-4">
-                                <div>
-                                    <h2 className="font-bold text-slate-950">
+                                <div className="min-w-0">
+                                    <p className="text-sm font-bold text-teal-700">
+                                        {t(fishItem.category)}
+                                    </p>
+
+                                    <h2 className="mt-1 wrap-break-word text-xl font-bold text-slate-950">
                                         {fishItem.common_name}
                                     </h2>
 
-                                    <p className="mt-1 text-sm text-slate-600">
+                                    <p className="mt-1 text-sm italic text-slate-600">
                                         {fishItem.scientific_name ?? '-'}
                                     </p>
                                 </div>
 
-                                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
+                                <span
+                                    className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
                                         {fishItem.is_active ? t('active') : t('inactive')}
                                 </span>
                             </div>
 
-                            <p className="mt-4 text-sm text-slate-600">
-                                {t('category')}: {t(fishItem.category)}
-                            </p>
+                            <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+                                <div className="rounded-md bg-slate-50 p-3">
+                                    <p className="font-semibold text-slate-500">
+                                        {t('category')}
+                                    </p>
+
+                                    <p className="mt-1 font-bold text-slate-950">
+                                        {t(fishItem.category)}
+                                    </p>
+                                </div>
+
+                                <div className="rounded-md bg-slate-50 p-3">
+                                    <p className="font-semibold text-slate-500">
+                                        {t('status')}
+                                    </p>
+
+                                    <p className="mt-1 font-bold text-slate-950">
+                                        {fishItem.is_active ? t('active') : t('inactive')}
+                                    </p>
+                                </div>
+                            </div>
 
                             {canManageFish && (
-                                <div className="mt-4 flex flex-wrap gap-3">
+                                <div className="mt-5 grid gap-3 sm:flex sm:flex-wrap">
                                     <button
                                         type="button"
                                         onClick={() => handleEditFish(fishItem)}
-                                        className="rounded-md border border-slate-300 bg-white px-4 py-2 font-bold text-slate-900 hover:border-teal-700"
+                                        className="rounded-md border border-slate-300 bg-white px-4 py-3 text-center font-bold text-slate-900 hover:border-teal-700"
                                     >
                                         {t('editFish')}
                                     </button>
@@ -283,7 +306,7 @@ export default function FishPage() {
                                         type="button"
                                         onClick={() => handleToggleFishStatus(fishItem)}
                                         disabled={updatingStatusFishId === fishItem.id}
-                                        className="rounded-md border border-slate-300 bg-white px-4 py-2 font-bold text-slate-900 hover:border-teal-700 disabled:cursor-not-allowed disabled:opacity-70"
+                                        className="rounded-md border border-slate-300 bg-white px-4 py-3 text-center font-bold text-slate-900 hover:border-teal-700 disabled:cursor-not-allowed disabled:opacity-70"
                                     >
                                         {updatingStatusFishId === fishItem.id
                                             ? t('updatingStatus')
